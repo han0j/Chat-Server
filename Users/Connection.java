@@ -3,6 +3,7 @@ package Users;
 import Main.*;
 import Users.*;
 import Messages.*;
+import org.w3c.dom.Text;
 
 import java.io.*;
 import java.net.*;
@@ -35,11 +36,14 @@ public class Connection extends Thread {
         try {
             UserMessage usermessage = (UserMessage) ojinput.readObject();
             setUser(usermessage.getUser());
+            System.out.println("User |" + usermessage.getUser().getUsername() + "| joined");
 
             ojoutput.writeObject(new ServerMessage(server.getName(), server.getUsers()));
 
+            //Listen for text messages from user
             while(true) {
-                Object message = ojinput.readObject();
+                TextMessage message = (TextMessage) ojinput.readObject();
+                server.broadcast(message);
             }
         } catch(IOException ex) {
             System.out.println("IOException in Connection.run");
@@ -59,6 +63,9 @@ public class Connection extends Thread {
     //==========Mutators/Accessors==========
     public void setUser(User user) {
         this.user = user;
+    }
+    public User getUser() {
+        return user;
     }
     //======================================
 }
