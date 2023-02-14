@@ -27,6 +27,12 @@ public class Server {
         try {
             ServerSocket serversocket = new ServerSocket(port);
 
+            System.out.println("==========CHAT SERVER==========");
+            System.out.println("Server =" + name + "= started");
+            System.out.println("IP: " + InetAddress.getLocalHost().getHostAddress());
+            System.out.println("Port: " + port);
+            System.out.println("===============================");
+
             //Accept incoming connections
             while(true) {
                 Socket socket = serversocket.accept();
@@ -37,6 +43,16 @@ public class Server {
             }
         } catch(IOException ex) {
             System.out.println("IOException in Server.init");
+        }
+    }
+
+    public void broadcast(TextMessage message) {
+        Iterator<Connection> iterator = connections.iterator();
+        while(iterator.hasNext()) {
+            Connection connection = iterator.next();
+            if(!connection.getUser().equals(message.getSender())) {
+                connection.sendMessage(message);
+            }
         }
     }
 
@@ -52,7 +68,8 @@ public class Server {
     //Main method
     //args - {name, port}
     public static void main(String[] args) {
-        Server server = new Server(args[0], Integer.parseInt(args[1]));
+        //Server server = new Server(args[0], Integer.parseInt(args[1]));
+        Server server = new Server("JC", 1000);
         server.init();
     }
 }
